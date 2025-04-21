@@ -7,6 +7,10 @@ import java.time.format.DateTimeFormatter;
 
 import com.github.devmribeiro.zenlog.enums.Level;
 
+/**
+ * @version 1.2.0
+ * @author Michael Ribeiro 
+ */
 public class Logger {
 
     private static Level currentLevel = Level.TRACE;
@@ -31,33 +35,19 @@ public class Logger {
     			sanitize(message) + "\u001B[0m"));
     }
 
-    public void t(Object msg) {
-    	log(Level.TRACE, msg);
-    }
+    public void t(Object msg) { log(Level.TRACE, msg); }
 
-    public void d(Object msg) {
-    	log(Level.DEBUG, msg);
-    }
+    public void d(Object msg) { log(Level.DEBUG, msg); }
 
-    public void i(Object msg) {
-        log(Level.INFO, msg);
-    }
+    public void i(Object msg) { log(Level.INFO, msg); }
 
-    public void w(Object msg) {
-        log(Level.WARN, msg);
-    }
+    public void w(Object msg) { log(Level.WARN, msg); }
 
-    public void e(Object msg) {
-        log(Level.ERROR, msg);
-    }
+    public void e(Object msg) { log(Level.ERROR, msg); }
 
-    public void e(Object msg, Throwable t) {
-        log(Level.ERROR, formatMessage(msg) + "\n" + getStackTrace(t));
-    }
+    public void e(Object msg, Throwable t) { log(Level.ERROR, formatMessage(msg) + "\n" + getStackTrace(t)); }
 
-    public void f(Object msg) {
-    	log(Level.FATAL, msg);
-    }
+    public void f(Object msg) { log(Level.FATAL, msg); }
 
     private String formatMessage(Object msg) {
         if (msg == null) return "null";
@@ -81,19 +71,19 @@ public class Logger {
         	color = "\u001B[37m";
 
     	else if (level == Level.DEBUG)
-        	color = "\u001B[46m";
+        	color = "\u001B[36m";
 
     	else if (level == Level.INFO)
-        	color = "\u001B[42m";
+        	color = "\u001B[32m";
 
     	else if (level == Level.WARN)
-        	color = "\u001B[43m";
+        	color = "\u001B[33m";
 
     	else if (level == Level.ERROR)
-        	color = "\u001B[41m";
+        	color = "\u001B[31m";
 
     	else if (level == Level.FATAL)
-        	color = "\u001B[45m";
+        	color = "\u001B[35m";
 
     	else
         	color = "\u001B[0m";

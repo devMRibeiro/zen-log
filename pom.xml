@@ -4,14 +4,19 @@
   <artifactId>zenlog</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>ZenLog</name>
-  
+
   <dependencies>
-  	<!-- https://mvnrepository.com/artifact/com.h2database/h2 -->
-	<dependency>
-	    <groupId>com.h2database</groupId>
-	    <artifactId>h2</artifactId>
-	    <version>2.3.232</version>
-	    <scope>runtime</scope>
+  	<dependency>
+    	<groupId>com.github.devmribeiro</groupId>
+    	<artifactId>zenlog</artifactId>
+    	<version>1.0.0</version>
 	</dependency>
   </dependencies>
+
+  <repositories>
+	<repository>
+    	<id>jitpack.io</id>
+    	<url>https://jitpack.io</url>
+  	</repository>
+  </repositories>
 </project>
