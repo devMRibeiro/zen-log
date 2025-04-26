@@ -88,34 +88,6 @@ public class Logger {
     	log(level, message, null);
     }
 
-    public void t(Object msg) {
-    	log(Level.TRACE, msg);
-    }
-
-    public void d(Object msg) {
-    	log(Level.DEBUG, msg);
-    }
-
-    public void i(Object msg) {
-    	log(Level.INFO, msg);
-    }
-
-    public void w(Object msg) {
-    	log(Level.WARN, msg);
-    }
-
-    public void e(Object msg) {
-    	log(Level.ERROR, msg);
-	}
-
-    public void e(Object msg, Throwable t) { 
-    	log(Level.ERROR, formatMessage(msg) + "\n" + getStackTrace(t), t);
-	}
-
-    public void f(Object msg) {
-    	log(Level.FATAL, msg);
-	}
-
     private String formatMessage(Object msg) {
         if (msg == null) return "null";
         return msg.toString();
@@ -157,4 +129,32 @@ public class Logger {
 
     	return color;
     }
+
+    public void t(Object msg) {
+    	log(Level.TRACE, msg);
+    }
+
+    public void d(Object msg) {
+    	log(Level.DEBUG, msg);
+    }
+
+    public void i(Object msg) {
+    	log(Level.INFO, msg);
+    }
+
+    public void w(Object msg) {
+    	log(Level.WARN, msg);
+    }
+
+    public void e(Object msg) {
+    	log(Level.ERROR, msg);
+	}
+
+    public void e(Object msg, Throwable t) { 
+    	log(Level.ERROR, formatMessage(msg) + "\n" + getStackTrace(t), t);
+	}
+
+    public void f(Object msg) {
+    	log(Level.FATAL, msg);
+	}
 }
