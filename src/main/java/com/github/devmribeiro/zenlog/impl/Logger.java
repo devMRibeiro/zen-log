@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import com.github.devmribeiro.zenlog.enums.Level;
 
 /**
- * @version 2.0.1
+ * @version 2.1.1
  * @author Michael Ribeiro 
  */
 public class Logger {
@@ -25,7 +25,7 @@ public class Logger {
     public Logger(Class<?> clazz) {
         this.clazz = clazz;
 
-        String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\s]", "_");
+        String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
         
         String logFileName = clazz.getSimpleName() + "_" + timestampFormatFilename + ".txt";
 
