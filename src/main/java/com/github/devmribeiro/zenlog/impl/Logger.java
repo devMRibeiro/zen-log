@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import com.github.devmribeiro.zenlog.enums.Level;
 
 /**
- * @version 1.2.0
+ * @version 2.0.1
  * @author Michael Ribeiro 
  */
 public class Logger {
@@ -51,7 +51,8 @@ public class Logger {
         String log = formatLog(level, message);
         System.out.println(log);
 
-        writeLogToFile(log, ex);
+        String logToFile = log.substring(log.indexOf("[" + level), log.indexOf("\u001B[0m"));
+        writeLogToFile(logToFile, ex);
     }
 
     private void writeLogToFile(String log, Throwable ex) {
