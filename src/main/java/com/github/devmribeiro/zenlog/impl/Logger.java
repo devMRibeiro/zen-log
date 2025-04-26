@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import com.github.devmribeiro.zenlog.enums.Level;
 
 /**
- * @version 2.1.1
+ * @version 2.1.2
  * @author Michael Ribeiro 
  */
 public class Logger {
