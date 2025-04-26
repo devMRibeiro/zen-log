@@ -45,21 +45,35 @@ public class Logger {
     }
 
     private void log(Level level, Object message, Throwable ex) {
-        if (level.ordinal() < currentLevel.ordinal()) return;
+        if (level.ordinal() < currentLevel.ordinal())
+        	return;
 
         String log = formatLog(level, message);
-
         System.out.println(log);
 
-        try {
+        writeLogToFile(log, ex);
+    }
+
+    private void writeLogToFile(String log, Throwable ex) {
+    	try {
             writer.write(log);
             writer.newLine();
+
+            if (ex != null) {
+                writer.write("Exception: " + ex.toString());
+                writer.newLine();
+                for (StackTraceElement element : ex.getStackTrace()) {
+                    writer.write("\tat " + element);
+                    writer.newLine();
+                }
+            }
+
             writer.flush();
         } catch (IOException e) {
             System.err.println("Error writing to the log file:\n" + e.getMessage());
         }
     }
-
+    
     private String formatLog(Level level, Object message) {
     	return String.format("%s[%s] [%s] [%s]: %s",
     			setColor(level),
