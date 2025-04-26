@@ -50,6 +50,14 @@ public class Logger {
         String log = formatLog(level, message);
 
         System.out.println(log);
+
+        try {
+            writer.write(log);
+            writer.newLine();
+            writer.flush();
+        } catch (IOException e) {
+            System.err.println("Error writing to the log file:\n" + e.getMessage());
+        }
     }
 
     private String formatLog(Level level, Object message) {
