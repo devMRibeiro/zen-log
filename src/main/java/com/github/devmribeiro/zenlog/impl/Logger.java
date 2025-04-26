@@ -21,12 +21,13 @@ public class Logger {
     private final Class<?> clazz;
     private final BufferedWriter writer;
     private final DateTimeFormatter timestampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private final DateTimeFormatter timestampFileName = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm_ss");
 
     public Logger(Class<?> clazz) {
         this.clazz = clazz;
 
-        String logFileName = clazz.getSimpleName() + "_" + LocalDateTime.now().format(timestampFileName) + ".txt";
+        String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\s]", "_");
+        
+        String logFileName = clazz.getSimpleName() + "_" + timestampFormatFilename + ".txt";
 
         String executionDir = new File("").getAbsolutePath();
         File logFile = new File(executionDir + "/logs", logFileName);
@@ -46,12 +47,18 @@ public class Logger {
     private void log(Level level, Object message, Throwable ex) {
         if (level.ordinal() < currentLevel.ordinal()) return;
 
-        System.out.println(String.format("%s[%s] [%s] [%s]: %s",
+        String log = formatLog(level, message);
+
+        System.out.println(log);
+    }
+
+    private String formatLog(Level level, Object message) {
+    	return String.format("%s[%s] [%s] [%s]: %s",
     			setColor(level),
     			level.name(),
     			LocalDateTime.now().format(timestampFormat),
     			clazz.getSimpleName(),
-    			sanitize(message) + "\u001B[0m"));
+    			sanitize(message) + "\u001B[0m");
     }
 
     private void log(Level level, Object message) {
