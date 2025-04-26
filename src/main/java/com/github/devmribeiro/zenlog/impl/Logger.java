@@ -1,5 +1,9 @@
 package com.github.devmribeiro.zenlog.impl;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
@@ -14,40 +18,73 @@ import com.github.devmribeiro.zenlog.enums.Level;
 public class Logger {
 
     private static Level currentLevel = Level.TRACE;
-    private final String className;
+    private final Class<?> clazz;
+    private final BufferedWriter writer;
+    private final DateTimeFormatter timestampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private final DateTimeFormatter timestampFileName = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH_mm_ss");
 
     public Logger(Class<?> clazz) {
-        this.className = clazz.getSimpleName();
+        this.clazz = clazz;
+
+        String logFileName = clazz.getSimpleName() + "_" + LocalDateTime.now().format(timestampFileName) + ".txt";
+
+        String executionDir = new File("").getAbsolutePath();
+        File logFile = new File(executionDir + "/logs", logFileName);
+
+        try {
+            logFile.getParentFile().mkdirs();
+            writer = new BufferedWriter(new FileWriter(logFile, true));
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating log file", e);
+        }
     }
 
     public static void setLevel(Level level) {
         currentLevel = level;
     }
 
-    private void log(Level level, Object message) {
+    private void log(Level level, Object message, Throwable ex) {
         if (level.ordinal() < currentLevel.ordinal()) return;
 
         System.out.println(String.format("%s[%s] [%s] [%s]: %s",
     			setColor(level),
     			level.name(),
-    			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()),
-    			className,
+    			LocalDateTime.now().format(timestampFormat),
+    			clazz.getSimpleName(),
     			sanitize(message) + "\u001B[0m"));
     }
 
-    public void t(Object msg) { log(Level.TRACE, msg); }
+    private void log(Level level, Object message) {
+    	log(level, message, null);
+    }
 
-    public void d(Object msg) { log(Level.DEBUG, msg); }
+    public void t(Object msg) {
+    	log(Level.TRACE, msg);
+    }
 
-    public void i(Object msg) { log(Level.INFO, msg); }
+    public void d(Object msg) {
+    	log(Level.DEBUG, msg);
+    }
 
-    public void w(Object msg) { log(Level.WARN, msg); }
+    public void i(Object msg) {
+    	log(Level.INFO, msg);
+    }
 
-    public void e(Object msg) { log(Level.ERROR, msg); }
+    public void w(Object msg) {
+    	log(Level.WARN, msg);
+    }
 
-    public void e(Object msg, Throwable t) { log(Level.ERROR, formatMessage(msg) + "\n" + getStackTrace(t)); }
+    public void e(Object msg) {
+    	log(Level.ERROR, msg);
+	}
 
-    public void f(Object msg) { log(Level.FATAL, msg); }
+    public void e(Object msg, Throwable t) { 
+    	log(Level.ERROR, formatMessage(msg) + "\n" + getStackTrace(t), t);
+	}
+
+    public void f(Object msg) {
+    	log(Level.FATAL, msg);
+	}
 
     private String formatMessage(Object msg) {
         if (msg == null) return "null";
