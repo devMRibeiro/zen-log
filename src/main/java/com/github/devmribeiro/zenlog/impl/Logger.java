@@ -8,29 +8,33 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.github.devmribeiro.zenlog.enums.Level;
 
 /**
- * @version 2.1.2
+ * @version 2.2.0
  * @author Michael Ribeiro 
  */
 public class Logger {
 
     private static Level currentLevel = Level.TRACE;
     private final Class<?> clazz;
-    private final BufferedWriter writer;
+    private static BufferedWriter writer;
     private final DateTimeFormatter timestampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final Map<Class<?>, Logger> instances = new HashMap<Class<?>, Logger>();
+ 
+    public static Logger getLogger(Class<?> clazz) {
+    	return instances.computeIfAbsent(clazz, Logger::new);
+    }
 
     public Logger(Class<?> clazz) {
         this.clazz = clazz;
 
         String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
-        
-        String logFileName = clazz.getSimpleName() + "_" + timestampFormatFilename + ".txt";
 
-        String executionDir = new File("").getAbsolutePath();
-        File logFile = new File(executionDir + "/logs", logFileName);
+        File logFile = new File(new File("").getAbsolutePath() + "/logs", timestampFormatFilename + ".txt");
 
         try {
             logFile.getParentFile().mkdirs();
