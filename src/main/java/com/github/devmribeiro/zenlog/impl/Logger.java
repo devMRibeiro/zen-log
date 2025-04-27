@@ -32,16 +32,23 @@ public class Logger {
     public Logger(Class<?> clazz) {
         this.clazz = clazz;
 
-        String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
+    	if (writer == null) {
+    		synchronized (Logger.class) {
+				if (writer == null) {
+					String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
 
-        File logFile = new File(new File("").getAbsolutePath() + "/logs", timestampFormatFilename + ".txt");
+			        File logFile = new File(new File("").getAbsolutePath() + "/logs", timestampFormatFilename + ".txt");
 
-        try {
-            logFile.getParentFile().mkdirs();
-            writer = new BufferedWriter(new FileWriter(logFile, true));
-        } catch (IOException e) {
-            throw new RuntimeException("Error creating log file", e);
-        }
+			        logFile.getParentFile().mkdirs();
+
+			        try {
+		            	writer = new BufferedWriter(new FileWriter(logFile, true));
+		            } catch (IOException e) {
+		            	throw new RuntimeException("Error creating log file", e);
+		            }
+		        }
+			}
+    	}
     }
 
     public static void setLevel(Level level) {
