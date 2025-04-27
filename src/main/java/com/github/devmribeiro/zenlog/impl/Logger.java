@@ -14,7 +14,7 @@ import java.util.Map;
 import com.github.devmribeiro.zenlog.enums.Level;
 
 /**
- * @version 2.2.0
+ * @version 2.3.0
  * @author Michael Ribeiro 
  */
 public class Logger {
@@ -34,7 +34,7 @@ public class Logger {
 
     	if (writer == null) {
     		synchronized (Logger.class) {
-				if (writer == null) {
+				if (writer == null) { // double-checked locking
 					String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
 
 			        File logFile = new File(new File("").getAbsolutePath() + "/logs", timestampFormatFilename + ".txt");
