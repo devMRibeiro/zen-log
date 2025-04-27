@@ -31,24 +31,7 @@ public class Logger {
 
     public Logger(Class<?> clazz) {
         this.clazz = clazz;
-
-    	if (writer == null) {
-    		synchronized (Logger.class) {
-				if (writer == null) { // double-checked locking
-					String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
-
-			        File logFile = new File(new File("").getAbsolutePath() + "/logs", timestampFormatFilename + ".txt");
-
-			        logFile.getParentFile().mkdirs();
-
-			        try {
-		            	writer = new BufferedWriter(new FileWriter(logFile, true));
-		            } catch (IOException e) {
-		            	throw new RuntimeException("Error creating log file", e);
-		            }
-		        }
-			}
-    	}
+        initializeWriter();
     }
 
     public static void setLevel(Level level) {
@@ -66,6 +49,24 @@ public class Logger {
         writeLogToFile(logToFile, ex);
     }
 
+    private void initializeWriter() {
+    	if (writer == null) {
+    		synchronized (Logger.class) {
+				if (writer == null) { // double-checked locking
+					String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
+
+			        File logFile = new File(new File("").getAbsolutePath() + "/logs", timestampFormatFilename + ".txt");
+
+			        logFile.getParentFile().mkdirs();
+
+			        try {
+		            	writer = new BufferedWriter(new FileWriter(logFile, true));
+		            } catch (IOException e) { }
+		        }
+			}
+    	}
+    }
+    
     private void writeLogToFile(String log, Throwable ex) {
     	try {
             writer.write(log);
