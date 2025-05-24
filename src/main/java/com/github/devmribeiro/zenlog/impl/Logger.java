@@ -6,7 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +26,8 @@ public class Logger {
     private static BufferedWriter writer;
     private final DateTimeFormatter timestampFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private static final Map<Class<?>, Logger> instances = new HashMap<Class<?>, Logger>();
- 
+    private static final String LOGS_FILE_PATH = new File("").getAbsolutePath() + "/logs/" + YearMonth.now();
+    
     public static Logger getLogger(Class<?> clazz) {
     	return instances.computeIfAbsent(clazz, Logger::new);
     }
@@ -53,11 +56,13 @@ public class Logger {
     	if (writer == null) {
     		synchronized (Logger.class) {
 				if (writer == null) { // double-checked locking
-					String timestampFormatFilename = LocalDateTime.now().format(timestampFormat).replaceAll("[:\\s]", "_");
+					String timestampFormatFilename = LocalDateTime.now().plusMonths(1).format(timestampFormat).replaceAll("[:\\s]", "_");
 
-			        File logFile = new File(new File("").getAbsolutePath() + "/logs", timestampFormatFilename + ".txt");
+			        File logFile = new File(LOGS_FILE_PATH, timestampFormatFilename + ".txt");
 
 			        logFile.getParentFile().mkdirs();
+
+			        removeOldLogs();
 
 			        try {
 		            	writer = new BufferedWriter(new FileWriter(logFile, true));
@@ -66,7 +71,39 @@ public class Logger {
 			}
     	}
     }
-    
+
+    private void removeOldLogs() {
+    	File[] files = new File(new File("").getAbsolutePath() + "/logs/").listFiles();
+
+        LocalDate now = LocalDate.now();
+        
+        for (File file : files) {
+        	if (file.isDirectory() && file.getName().trim().startsWith("2") && file.getName().trim().length() == 7) {
+	        	String[] fields = file.getName().split("-", 2);
+
+	        	if (fields.length != 2) continue;
+
+	        	if (!fields[0].trim().matches("\\d+") || !fields[1].trim().matches("\\d+")) continue;
+
+	        	int year = Integer.valueOf(fields[0].trim());
+	        	int month = Integer.valueOf(fields[1].trim());
+
+	        	if (year < now.getYear() || month < now.getMonthValue() - 2)
+	        		deleteFolder(file);
+        	}
+        }
+    }
+
+    private static void deleteFolder(File dir) {
+		if (dir.isDirectory()) {
+			File[] children = dir.listFiles();
+			if (children != null)
+				for (int i = 0; i < children.length; i++)
+					deleteFolder(children[i]);
+		}
+		dir.delete();
+	}
+
     private void writeLogToFile(String log, Throwable ex) {
     	try {
             writer.write(log);
